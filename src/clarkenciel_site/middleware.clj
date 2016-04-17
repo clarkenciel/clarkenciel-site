@@ -9,4 +9,4 @@
       (wrap-session)
       (wrap-json-params)
       (wrap-json-response)
-      ))
+      (wrap-resource "app/")))

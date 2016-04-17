@@ -1,0 +1,31 @@
+.big_text {
+    font-size 36px;
+}
+
+.normal_text {
+    font-size: 24px;
+}
+
+/* Mobile */
+@media only screen and (max-device-width: 480px) {
+    .big_text {
+        font-size: 24px;
+    }
+
+    .normal_text {
+        font-size: 18px;
+    }
+}
+
+.character {
+    display: inline-block;
+    cursor: none;
+}
+
+.red_text {
+    color: red;
+}
+
+.black_text {
+    color: black;
+}

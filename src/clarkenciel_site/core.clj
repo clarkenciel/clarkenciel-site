@@ -9,7 +9,7 @@
 
 (def cli-options
   [["-p" "--port PORT" "Port number"
-    :default 42
+    :default 3000
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be number between 0 and 65536"]]
    ["-h" "--help"]])

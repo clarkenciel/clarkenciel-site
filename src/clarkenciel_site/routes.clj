@@ -14,7 +14,7 @@
                  (h/user-posts-handler user-name))
             (POST "/new_post" req
                   (h/add-post-handler req))
-            (PUT "/update_post" req
+            (PUT "/update_post/:post-id" [post-id :as req]
                  (h/update-post-handler post-id req))
             (GET "/:post-id" [post-id]
                  (h/get-post-handler post-id)))))
@@ -28,8 +28,8 @@
                  (h/get-user-handler user-email-or-id))
             (POST "/new_user" req
                   (h/add-user-handler req))
-            (PUT "/update_user" req
-                 (h/add-user-handler req)))))
+            (PUT "/update_user/:user-id" [user-id :as req]
+                 (h/update-user-handler user-id req)))))
 
 (def auth-routes
   (routes
