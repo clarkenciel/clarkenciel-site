@@ -1,5 +1,6 @@
 (ns clarkenciel-site.routes
   (:require [compojure.core :refer [GET POST PUT DELETE routes context]]
+	    [compojure.route :refer [files]]
             [clarkenciel-site.handlers :as h]))
 
 ;; TODO: revisit these routes to make them easier to block with authorization
@@ -41,5 +42,5 @@
 
 (def app-routes
   (routes
-   
+   (files "/" {:root "resources/app"})
    (GET "*" [] h/home-page-handler)))
