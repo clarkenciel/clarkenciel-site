@@ -31,7 +31,7 @@
              (GET "/:id" [id] h/get-user-handler))
     (context "/api/posts" []
              (PUT "/new" req h/add-post-handler)
-             (POST "/update/:post-id" [post-id :as req] h/update-post-handler))   
+             (POST "/update" req h/update-post-handler))   
     (context "/api/auth" []
              (POST "/logout" req h/logout-handler)))
    {:handler auth/authenticate-token
@@ -40,6 +40,7 @@
 (defn app-routes []
   (routes
    (resources "/")
-   (GET "*" [] h/home-page-handler)
    public-routes
+   (GET "*" [] h/home-page-handler)
+   
    secured-routes))

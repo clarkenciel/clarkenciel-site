@@ -43,6 +43,14 @@ values
 (:publish-date, :title, :body, :author-id)
 returning id
 
+-- :name update-post! :<! :1
+update posts
+set title = :title,
+    body = :body,
+    author_id = :author-id
+where id = :id
+returning *
+
 -- :name get-all-posts :? :*
 select *
 from posts

@@ -1,5 +1,5 @@
 (ns clarkenciel-site.handlers
-  (:require [ring.util.response :refer [response created]]
+  (:require [ring.util.response :refer [response created status]]
             [clj-time.core :as time]
             [clj-time.coerce :as time-coerce]
             [clarkenciel-site.db.core :refer :all]
@@ -42,8 +42,24 @@
          {:message (str "'" post-title "' could not be created.")
           :error   e})))))
 
-(defn update-post-handler [post-id request]
-  (str "update-post" post-id request))
+(defn update-post-handler [{params :body :as request}]
+  (try
+    (let [{title     "title"
+           body      "body"
+           author-id "author-id"
+           id        "id"} params]
+      (response
+       {:post
+        (update-post!
+         {:id id
+          :title title          
+          :body body
+          :author-id author-id})}))
+    (catch Exception e
+      (println e)
+      (-> {:message "Could not update post: '" (get params "title") "'."}
+          (response)
+          (status 500)))))
 
 (defn get-post-handler [post-id]
   (println post-id)

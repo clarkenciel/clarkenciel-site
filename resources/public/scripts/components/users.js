@@ -20,7 +20,7 @@ X.model.logout = function (formData) {
                     config: Common.model.setAJAXToken
                    }).
     then(function (resp) {
-      localStorage.clear();
+      sessionStorage.clear();
       m.route('/');
     });
 };
@@ -36,7 +36,7 @@ X.model.login = function (formData) {
       X.model.toStorage(resp.user);
     }).catch(function (e) {
       console.log(e);
-      localStorage.clear();
+      sessionStorage.clear();
       m.route('/');
     });
 };
@@ -47,13 +47,13 @@ X.model.emptyUser = function () {
 
 X.model.toStorage = function (user) {
   for (var param in user) {
-    localStorage.setItem(param, JSON.stringify(user[param]));
+    sessionStorage.setItem(param, JSON.stringify(user[param]));
   }
 };
 
 X.model.fromStorage = function () {
   var tmp = ['first_name', 'last_name', 'email', 'id'].reduce(function (acc, param) {
-    var val = localStorage.getItem(param);
+    var val = sessionStorage.getItem(param);
     if (acc && val) {
       acc[param] = val;
       return acc;

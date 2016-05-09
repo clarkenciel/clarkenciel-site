@@ -12,7 +12,6 @@ X.model.get = function (postId) {
   return m.request({ method: 'GET',
                      url: '/api/posts/'+postId }).
     then(function (data) {
-      console.log(data);
       return new X.vms.post(data.post);
     }).catch(function (e) {
       console.log(e);
@@ -20,7 +19,17 @@ X.model.get = function (postId) {
 };
 
 X.model.all = function () {
-  
+  return m.request({ method: 'GET',
+                     url: '/api/posts' }).
+    then(function (resp) {
+      console.log(resp);
+      return new X.vms.list(
+        resp.posts.map(function (p) {
+          return new X.vms.post(p);
+        }));
+    }).catch(function (e) {
+      console.log(e);
+    });
 };
 
 X.model.forUser = function (userId) {
@@ -50,8 +59,9 @@ X.model.new = function (data) {
 X.model.edit = function (data) {
   console.log(data);
   return m.request({ method: 'POST',
-                     url: '/api/posts/update/' + data.id,
-                     data: { 'title': data.title,
+                     url: '/api/posts/update',
+                     data: { 'id': data.id,
+                             'title': data.title,
                              'body': data.body,
                              'author-id': data['author-id'] },
                      config: Common.model.setAJAXToken });
@@ -107,13 +117,15 @@ X.controllers.new = function () {
 };
 
 X.controllers.edit = function () {
+  var ctl = {};
   var author = Users.model.fromStorage();
-  var post = X.model.get(m.route.param('id'));
-  if (!author) m.route('/login');
-  if (post.author.id() != author.id()) m.route('/login');
-  return {
-    post: m.prop(post)
-  };  
+  X.model.get(m.route.param('id')).
+    then(function (post) {
+      if (!author) m.route('/login');
+      if (post.author.id() != author.id()) m.route('/login');
+      ctl.post = m.prop(post);
+    });
+  return ctl;
 };
 
 /* View Helpers */
@@ -121,10 +133,11 @@ X.controllers.edit = function () {
 /* VIEWING */
 
 var postDisplay = function (type, components){
-  return function (ctl) {
+  return function (post) {
     return m('div.' + type + '.holder',
              m('div.' + type + '.content',
-               m('article', components.map(function (f) { return f(ctl.post()); }))));
+               m('article',
+                 components.map(function(f) { return f(post); }))));
   };
 };
 
@@ -152,11 +165,11 @@ var postBody = function (vm) {
 
 /* EDITING */
 
-var postEditTitleField = function (vm) {
+var postTitleField = function (vm) {
   return Common.views.formField('input', 'text', 'title', vm);
 };
 
-var postEditBodyField= function (vm) {
+var postBodyField = function (vm) {
   return Common.views.formField('textarea', null, 'body', vm);
 };
 
@@ -167,7 +180,7 @@ var postAuthorField = function (vm) {
                        value:vm.author.id()}));
 };
 
-var postForm = Common.views.formBuilder([postEditTitleField, postEditBodyField]);
+var postForm = Common.views.formBuilder([postTitleField, postBodyField]);
 
 /* VIEWS */
 
@@ -178,7 +191,8 @@ X.views.postEditForm = function (vm) {
                   vm,
                   function (formData) {
                     formData['author-id'] = vm.author.id();
-                    return X.mode.edit(formData);                                      
+                    formData['id'] = vm.id();
+                    return X.model.edit(formData);
                   });
 };
 
@@ -197,4 +211,4 @@ X.views.full = postDisplay('full_view', [postHeader, postBody]);
 
 X.views.new = postDisplay('full_view', [X.views.postCreateForm]);
 
-X.views.edit = postDisplay('full_view', [X.views.postEditform]);
+X.views.edit = postDisplay('full_view', [X.views.postEditForm]);
