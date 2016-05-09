@@ -1,0 +1,54 @@
+/* CLEAROUT */
+* {
+    margin:0;
+    padding:0;
+}
+
+/* TEXT */
+.title_text {
+
+}
+
+.subtitle_text {
+
+}
+
+.post_text {
+
+}
+
+.big_text {
+    font-size 36px;
+}
+
+.normal_text {
+    font-size: 24px;
+}
+
+/* CONTENT */
+.full_view_holder {
+
+}
+
+.full_view_content {
+
+}
+
+.preview_holder {
+
+}
+
+.preview_content {
+
+}
+
+/* Mobile */
+@media only screen and (max-device-width: 480px) {
+    .big_text {
+        font-size: 24px;
+    }
+
+    .normal_text {
+        font-size: 18px;
+    }
+}

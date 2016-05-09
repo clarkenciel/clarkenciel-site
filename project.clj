@@ -10,9 +10,11 @@
   :resource-paths ["resources" "joplin"]
   
   :dependencies [[org.clojure/clojure "1.7.0"]
+                 
                  ;; Web server
                  [compojure "1.5.0"]
                  [ring/ring-json "0.4.0"]
+                 
                  [aleph "0.4.0"]
 
                  ;; DB
@@ -22,7 +24,10 @@
                  [mount "0.1.10"]                 
                  [joplin.core "0.3.6"]
                  [joplin.jdbc "0.3.6"]
-                 
+                 [clj-time "0.11.0"]
+
+                 ;; Security
+                 [buddy "0.13.0"]
                  
                  ;; utils
                  [org.clojure/tools.cli "0.3.3"]
@@ -31,8 +36,6 @@
   :plugins [[lein-environ "1.0.2"]]
   :main clarkenciel-site.core
   :aot [clarkenciel-site.core]
-  :test-path "test/clarkenciel-site"
-  :target-path "target/%s/"
 
   :aliases
   {"migrate" ["run" "-m" "clarkenciel-site.db.utils/migrate"]
@@ -40,7 +43,8 @@
    "rollback" ["run" "-m" "clarkenciel-site.db.utils/rollback"]
    "reset" ["run" "-m" "clarkenciel-site.db.utils/reset"]
    "pending" ["run" "-m" "clarkenciel-site.db.utils/pending"]
-   "create" ["run" "-m" "clarkenciel-site.db.utils/create"]}
+   "create" ["run" "-m" "clarkenciel-site.db.utils/create"]
+   "clear-db" ["run" "-m" "clarkenciel-site.db.utils/clear-db"]}
   
   :profiles
   {:uberjar {:omit-source true

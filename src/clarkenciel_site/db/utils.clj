@@ -1,32 +1,38 @@
 (ns clarkenciel-site.db.utils
   (:require [joplin.repl :as jr]
-            [environ.core :refer [env]]))
+            [environ.core :refer [env]]
+            [clarkenciel-site.db.core :as queries]
+            [mount.core :as mount]))
 
 (defn config []
   {:migrators
-   {:sql-mig "joplin/migrations/sql"}
+   {:sql-mig "resources/joplin/migrations/sql"}
    
    :databases
-   {:prod {:type :sql :url (env :database-url)}
-    :dev  {:type :sql :url (env :database-url)}
-    :test {:type :sql :url (env :database-url)}}
+   {:all {:type :sql :url (env :database-url)}}
 
    :environments
-   {:dev  [{:db :dev  :migrator :sql-mig}]
-    :test [{:db :test :migrator :sql-mig}]
-    :prod [{:db :prod :migrator :sql-mig}] }})
+   {:all [{:db :all :migrator :sql-mig}] }})
 
-(defn migrate [joplin-env]
-  (jr/migrate (config) (keyword joplin-env)))
+(defn migrate []
+  (jr/migrate (config) :all))
 
-(defn create [joplin-env db id]
-  (jr/create (config) (keyword joplin-env) (keyword db) (keyword id)))
+(defn create [id]
+  (jr/create (config) :all :all id))
 
-(defn rollback [joplin-env db amt-or-id]
-  (jr/rollback (config) (keyword joplin-env) (keyword db) (keyword amt-or-id)))
+(defn rollback [& ids]
+  (let [f (partial jr/rollback (config) :all :all)]
+    (doseq [id ids]
+      (f ids))))
 
-(defn reset [joplin-env db]
-  (jr/reset (config) (keyword joplin-env) (keyword db)))
+(defn reset []
+  (jr/reset (config) :all :all))
 
-(defn pending [joplin-env db]
-  (jr/pending (config) (keyword joplin-env) (keyword db)))
+(defn pending []
+  (jr/pending (config) :all))
+
+(defn clear-db []  
+  (do
+    (mount/start)
+    (queries/delete-all-users!) ; cascades thru posts/posts_tags
+    (queries/delete-all-tags!)))

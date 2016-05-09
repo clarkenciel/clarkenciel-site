@@ -2,10 +2,13 @@
   (:gen-class)
   (:require [clarkenciel-site.middleware :refer [wrapped-app]]
             [aleph.http :refer [start-server]]
-            [clojure.tools.cli :refer [parse-opts]]))
+            [clojure.tools.cli :refer [parse-opts]]
+            [mount.core :as mount]))
 
 (defn app [port]
-  (start-server #'wrapped-app {:port port}))
+  (let [app (wrapped-app)]
+    (mount/start)
+    (start-server app {:port port})))
 
 (def cli-options
   [["-p" "--port PORT" "Port number"
@@ -28,3 +31,16 @@
       :else
       (do (println "running on port:" port)
           (app port)))))
+
+
+(comment
+
+  (require '[clj-http.client :as client])
+  (require '[clarkenciel-site.db.core :as queries])
+  
+  (def ^{:dynamic true} *server* (app 10003))
+
+  (.close *server*)
+  
+  
+  )
