@@ -160,7 +160,7 @@ var postAuthor = function (vm) {
 
 var postBody = function (vm) {
   return m("div.post_text",
-           vm.body());
+           { innerHTML: vm.body() });
 };
 
 /* EDITING */

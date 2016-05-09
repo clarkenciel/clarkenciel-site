@@ -25,11 +25,19 @@ X.views.getFormValues = function (formId) {
   var inputs = [].slice.call(form.getElementsByTagName('input')).
         filter(function (input) { return input.type !== 'submit'; });
   var textareas = [].slice.call(form.getElementsByTagName('textarea'));
-  var data = inputs.concat(textareas).reduce(function (acc, x) {
+  var mces = typeof tinyMCE === 'undefined' ? {} : X.views.getTinyMCE();
+  console.log(mces);
+  var data = inputs.concat(textareas).concat(mces).reduce(function (acc, x) {
     acc[x.name] = x.value;
     return acc;
   }, {});
   return data;
+};
+
+X.views.getTinyMCE = function () {
+  var mce = { name: 'body',
+              value: tinyMCE.get('body').getContent() };
+  return mce;
 };
 
 X.views.formField = function (ele, type, attr, vm) {

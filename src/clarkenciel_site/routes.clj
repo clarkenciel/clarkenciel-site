@@ -16,8 +16,8 @@
                  h/all-posts-handler)
             (GET "/for_tag/:tag-name" [tag-name]
                  (h/posts-for-tag-handler tag-name))
-            (GET "/for_user/:user-name" [user-name]
-                 (h/posts-for-user-handler user-name))
+            (GET "/for_user/:identifier" [identifier]
+                 (h/posts-for-user-handler identifier))
             (GET "/:post-id" [post-id]
                  (h/get-post-handler post-id)))))
 

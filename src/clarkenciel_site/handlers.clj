@@ -14,18 +14,25 @@
     (response {:posts (map process-post posts)})))
 
 (defn posts-for-tag-handler [tag-name]
-  (let [tag-id (:id (get-tag-by-name {:name tag-name}))]
-    (response {:posts (get-posts-by-tag {:tag-id tag-id})})))
+  (try
+    (let [tag-id (:id (get-tag-by-name {:name tag-name}))]
+      (response {:posts (get-posts-by-tag {:tag-id tag-id})}))
+    (catch Exception e
+      (println e)
+      (resp/four-hundred (str "Posts for " tag-name " do not exist.")))))
 
 (defn posts-for-user-handler [user-identifier]
-  (let [{user-id :id} (get-user user-identifier)]
-    (response
-     {:posts
-      (map process-post
-           (get-posts-for-author {:author-id user-id}))})))
+  (try
+    (let [{user-id :id} (get-user user-identifier)]
+      (response
+       {:posts
+        (map process-post
+             (get-posts-for-author {:author-id user-id}))}))
+    (catch Exception e
+      (println e)
+      (resp/four-hundred (str "Posts for " user-identifier " do not exist.")))))
 
 (defn add-post-handler [{params :body}]
-  (println "post params" params)
   (let [{post-title "title"
          post-body "body"
          post-author-id "author-id"} params]
@@ -62,26 +69,37 @@
           (status 500)))))
 
 (defn get-post-handler [post-id]
-  (println post-id)
-  (let [post (->> (Integer/parseInt post-id)
-                  (hash-map :id)
-                  (get-post-by-id)
-                  (process-post))]
-    (response {:post post})))
+  (try
+    (let [post (->> (Integer/parseInt post-id)
+                    (hash-map :id)
+                    (get-post-by-id)
+                    (process-post))]
+      (response {:post post}))
+    (catch Exception e
+      (println e)
+      (resp/four-hundred (str "The post " post-id " does noto exist.")))))
 
 (defn all-users-handler []
   (response {:users (map #(dissoc % :password) (get-all-users))}))
 
 (defn get-user-handler [user-email-or-id]
-  (let [user (get-user user-email-or-id)]
-    (response {:user (dissoc user :password)})))
+  (try
+    (let [user (get-user user-email-or-id)]
+      (response {:user (dissoc user :password)}))
+    (catch Exception e
+      (println e)
+      (resp/four-hundred (str "The user " user-email-or-id " does not exist.")))))
 
 (defn create-user-handler [{:keys [body]}]
   (let [{first-name "first-name"
          last-name "last-name"
          email "email"
          password "password"} body]
-    (create-user! first-name last-name email password)))
+    (try
+     (create-user! first-name last-name email password)
+     (catch Exception e
+       (println e)
+       (resp/four-hundred (str "Could not create user " email "."))))))
 
 (defn remove-user-handler [request user-name]
   (str "remove-user" request user-name))

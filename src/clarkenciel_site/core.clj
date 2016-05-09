@@ -35,12 +35,10 @@
 
 (comment
 
-  (require '[clj-http.client :as client])
-  (require '[clarkenciel-site.db.core :as queries])
+  (require '[clj-http.client :as client]
+           '[clarkenciel-site.db.core :as queries])
   
   (def ^{:dynamic true} *server* (app 10003))
 
-  (.close *server*)
-  
-  
+  (.close *server*)  
   )
